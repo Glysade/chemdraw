@@ -65,19 +65,19 @@ using namespace std;
 
 // Added by Glysade
 namespace cs {
-    const char* kSymbolDegree   = u8"\u00B0";  // °
-    const char* kSymbolEllipsis = u8"\u2026";  // …
-    const char* kSymbolEnDash   = u8"\u2013";  // –
-    const char* kSymbolEmDash   = u8"\u2014";  // —
-    const char* kSymbolPlusMinus= u8"\u00B1";  // ±
-    const char* kSymbolBullet   = u8"\u2022";  // •
-    const char* kSymbolCenterDot= u8"\u00B7";  // ·
-    const char* kSymbolReg      = u8"\u00AE";  // ®
-    const char* kSymbolCopyright= u8"\u00A9";  // ©
-    const char* kSymbolAngstrom = u8"\u212B";  // Å
-    const char* kSymbolMicro    = u8"\u00B5";  // µ
-    const char* kSymbolCent     = u8"\u00A2";  // ¢
-    const char* kSymbolPound    = u8"\u00A3";  // £
+    const char* kSymbolDegree   = "\u00B0";  // °
+    const char* kSymbolEllipsis = "\u2026";  // …
+    const char* kSymbolEnDash   = "\u2013";  // –
+    const char* kSymbolEmDash   = "\u2014";  // —
+    const char* kSymbolPlusMinus= "\u00B1";  // ±
+    const char* kSymbolBullet   = "\u2022";  // •
+    const char* kSymbolCenterDot= "\u00B7";  // ·
+    const char* kSymbolReg      = "\u00AE";  // ®
+    const char* kSymbolCopyright= "\u00A9";  // ©
+    const char* kSymbolAngstrom = "\u212B";  // Å
+    const char* kSymbolMicro    = "\u00B5";  // µ
+    const char* kSymbolCent     = "\u00A2";  // ¢
+    const char* kSymbolPound    = "\u00A3";  // £
 }
 // End added by glysade
 /**
