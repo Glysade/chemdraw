@@ -5,7 +5,7 @@ template<class T>
 struct auto_buffer{
   std::vector<T> buffer;
 
-  auto_buffer<T>(unsigned num_elements) : buffer(num_elements) {
+  auto_buffer(unsigned num_elements) : buffer(num_elements) {
     ASSERT(num_elements);
   }
  
