@@ -1,5 +1,7 @@
 // TEMP HOLDER
 #include "cs_assert.h"
+#include <vector>
+
 // stupid implementation
 template<class T>
 struct auto_buffer{
