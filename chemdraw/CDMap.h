@@ -37,7 +37,7 @@ template<class Key, class Value>
 class CDMap {
 public:
   std::map<Key,Value> storage;
-  CDMap<Key,Value>() : storage() {}
+  CDMap() : storage() {}
   bool Contains(const Key &key) const {
     return storage.find(key) != storage.end();
   }
