@@ -804,7 +804,7 @@ inline CDXDataSink& operator<< (CDXDataSink& sink_arg, const CDXPoint3D &value_a
 //	or	CDXostream s(ofstream(outfile, ios::out | ios::trunc | ios::binary));
 // to send your output to a blob of memory or a C++ string, or to a stdio FILE *.
 
-class CDXostream : public CDXDataSink
+class CORE_CHEMISTRY_API CDXostream : public CDXDataSink
 {
 	std::ostream &os;
 public:
