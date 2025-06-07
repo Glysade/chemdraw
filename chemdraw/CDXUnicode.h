@@ -37,7 +37,6 @@
 #pragma once
 
 #include <string>
-#include <RDGeneral/export.h>
 #include "CoreChemistryAPI.h"
 #include "CDXConstants.h"
 

@@ -1,6 +1,5 @@
 #ifndef CORE_CHEISTRY_API_H
 #define CORE_CHEISTRY_API_H
-#include <RDGeneral/export.h>
 #include <boost/lexical_cast.hpp>
 #include <string>
 
@@ -15,10 +14,19 @@
 # endif
 #endif
 
-#ifdef RDKIT_CHEMDRAW_BUILD
-#define CORE_CHEMISTRY_API RDKIT_EXPORT_API
+#if defined(_WIN32) || defined(__CYGWIN__)
+  #ifdef MYLIB_EXPORTS
+    // building the DLL
+    #define CORE_CHEMISTRY_API __declspec(dllexport)
+  #else
+    // using the DLL
+    #define CORE_CHEMISTRY_API __declspec(dllimport)
+  #endif
+#elif defined(__GNUC__) && __GNUC__ >= 4
+  // GCC/Clang: export with default visibility
+  #define CORE_CHEMISTRY_API __attribute__((visibility("default")))
 #else
-#define CORE_CHEMISTRY_API RDKIT_IMPORT_API
+  #define CORE_CHEMISTRY_API
 #endif
 
 // Even if we are a static build we define this

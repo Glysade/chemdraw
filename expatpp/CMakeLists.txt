@@ -24,7 +24,7 @@ set(EXPAT_SRC
 	expatpp-code-r6-trunk/src_pp/expatpp.cpp
 )
 
-rdkit_library(expat ${EXPAT_SRC})
+add_library(expat ${EXPAT_SRC})
 target_include_directories(expat
      PRIVATE
        ${CMAKE_CURRENT_SOURCE_DIR}/expatpp-code-r6-trunk/src_pp
@@ -34,7 +34,7 @@ target_include_directories(expat
        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
        )
        
-if(RDK_INSTALL_STATIC_LIBS)
+if(EXPAT_INSTALL_STATIC_LIBS)
   target_include_directories(expat_static
      PRIVATE
        ${CMAKE_CURRENT_SOURCE_DIR}/expatpp-code-r6-trunk/src_pp
@@ -43,7 +43,7 @@ if(RDK_INSTALL_STATIC_LIBS)
        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/expatpp-code-r6-trunk/src_pp>
        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
        )
-endif(RDK_INSTALL_STATIC_LIBS)
+endif(EXPAT_INSTALL_STATIC_LIBS)
 
 if(MSVC)
   # == expat exporting all symbols
@@ -54,13 +54,20 @@ if(MSVC)
   target_compile_options(expat PRIVATE "/W0")
 endif()
 
-if(CMAKE_COMPILER_IS_CLANG OR CMAKE_COMPILER_IS_EMCC OR CMAKE_COMPILER_IS_GNUCXX)
-  message("== turn off errors")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
+    CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR
+    CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
+  message("== expat turn off warnings as errors when building")
   # turn off warnings as errors, this throws a bunch
   target_compile_options(expat PRIVATE "-Wno-error")
-  if(RDK_INSTALL_STATIC_LIBS)
+  if(EXPAT_INSTALL_STATIC_LIBS)
     target_compile_options(expat_static PRIVATE "-Wno-error")
-  endif(RDK_INSTALL_STATIC_LIBS)   
+  endif(EXPAT_INSTALL_STATIC_LIBS)   
 endif()
 
-install(TARGETS expat DESTINATION ${RDKit_LibDir})
+install(TARGETS expat EXPORT expatTargets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+install(EXPORT expatTargets DESTINATION lib/cmake/expat)
