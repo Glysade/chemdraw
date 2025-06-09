@@ -132,10 +132,11 @@ target_include_directories(ChemDraw
         $<INSTALL_INTERFACE:include>
 )
 
-# On Windows, define MYLIB_EXPORTS when building the DLL
+# On Windows, define CHEMDRAW_BUILD when building the DLL
+#  so we can use the correct declspec
 if (WIN32)
     target_compile_definitions(ChemDraw
-        PRIVATE CHEMDRAW_EXPORTS
+        PRIVATE CHEMDRAW_BUILD
     )
 endif()
 

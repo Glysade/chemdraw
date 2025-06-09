@@ -13,9 +13,8 @@
 #  define TARGET_OS_MAC 0
 # endif
 #endif
-
 #if defined(_WIN32) || defined(__CYGWIN__)
-  #ifdef MYLIB_EXPORTS
+  #ifdef CHEMDRAW_BUILD
     // building the DLL
     #define CORE_CHEMISTRY_API __declspec(dllexport)
   #else

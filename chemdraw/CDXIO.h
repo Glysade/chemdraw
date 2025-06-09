@@ -810,7 +810,7 @@ class CORE_CHEMISTRY_API CDXostream : public CDXDataSink
 public:
 	CDXostream(std::ostream &output) : os(output) {}
 	
-	CORE_CHEMISTRY_API void Put ( const INT8 *data, size_t n );
+	void Put ( const INT8 *data, size_t n );
 };
 
 // ***********************
