@@ -10,6 +10,9 @@
 #include <stdio.h>
 #include <assert.h>
 
+#ifndef XMLIMPORT
+#define XMLIMPORT
+#endif
 
 /**
 \file expatpp.h
@@ -73,7 +76,7 @@ their start and ending elements - makes it harder to unit test them in isolation
 
 \todo allow specification of encoding
 */
-class expatpp {
+class XMLIMPORT expatpp {
 public:
 	expatpp(bool createParser=true);
 	virtual ~expatpp();
