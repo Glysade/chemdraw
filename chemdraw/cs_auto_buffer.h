@@ -31,7 +31,7 @@
 // 
 
 #include "cs_assert.h"
-#includei <vector>
+#include <vector>
 
 // stupid implementation
 template<class T>

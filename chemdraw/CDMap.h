@@ -33,6 +33,8 @@
 // 
 #ifndef CDMAP_H
 #define CDMAP_H
+#include <map>
+
 template<class Key, class Value>
 class CDMap {
 public:

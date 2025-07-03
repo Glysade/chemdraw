@@ -36,6 +36,7 @@
 
 #include <cctype>    // std::tolower
 #include <algorithm> // std::equal
+#include <string>
 
 namespace cs {
 inline bool ichar_equals(char a, char b)
