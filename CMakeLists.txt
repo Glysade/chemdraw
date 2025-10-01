@@ -13,7 +13,7 @@ test_big_endian(WORDS_BIGENDIAN)
 #/* 1234 = LIL_ENDIAN, 4321 = BIGENDIAN */
 
 if(WORDS_BIGENDIAN)
-    add_definitions("-DPLATFORM_BIGENDIAN")	
+    add_definitions("-DPLATFORM_BIGENDIAN")
 else(WORDS_BIGENDIAN)
     add_definitions("-DPLATFORM_LITTLEENDIAN")
 endif(WORDS_BIGENDIAN)
@@ -152,20 +152,23 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
 endif()
 
 
-# export all the symbols for ChemDraw on MSVC                                                 
-if((MSVC AND BUILD_SHARED_LIBS) OR ((NOT MSVC) AND WIN32))                                
-    set_target_properties(ChemDraw PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)                
-endif()                                                                                       
-                                                                                              
-if(MSVC)                                                                                      
-  ADD_DEFINITIONS("-DTARGET_API_LIB -D_WINDOWS -DTARGET_OS_WIN32 -DHAVE_EXPAT_CONFIG_H")      
-  # we don't really control chemdraw source code, so suppress warnings                        
-  target_compile_options(ChemDraw PRIVATE "/W0")                                              
-else()                                                                                        
-  ADD_DEFINITIONS("-DTARGET_API_LIB -D__linux -DHAVE_EXPAT_CONFIG_H")                         
-  # we don't really control chemdraw source code, so suppress warnings                        
-  target_compile_options(ChemDraw PRIVATE -w -Wno-unknown-pragmas -Wno-error)                 
-endif()                                                                                       
+# on windows, disable dll import/export macros for static builds.
+# for dynamic builds, export all the symbols for ChemDraw on MSVC
+if(WIN32 AND NOT BUILD_SHARED_LIBS)
+    target_compile_definitions(ChemDraw PRIVATE CHEMDRAW_STATIC_LINK)
+elseif((MSVC AND BUILD_SHARED_LIBS) OR ((NOT MSVC) AND WIN32))
+    set_target_properties(ChemDraw PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+endif()
+
+if(MSVC)
+  ADD_DEFINITIONS("-DTARGET_API_LIB -D_WINDOWS -DTARGET_OS_WIN32 -DHAVE_EXPAT_CONFIG_H")
+  # we don't really control chemdraw source code, so suppress warnings
+  target_compile_options(ChemDraw PRIVATE "/W0")
+else()
+  ADD_DEFINITIONS("-DTARGET_API_LIB -D__linux -DHAVE_EXPAT_CONFIG_H")
+  # we don't really control chemdraw source code, so suppress warnings
+  target_compile_options(ChemDraw PRIVATE -w -Wno-unknown-pragmas -Wno-error)
+endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-comment -Wno-parentheses -Wno-logical-op-parentheses -Wno-pointer-bool-conversion -Wno-unused-value -Wno-unsequenced -Wno-constant-logical-operand")
