@@ -1,7 +1,7 @@
 # CMakeLists.txt
 cmake_minimum_required(VERSION 3.14)
 project(MyLibrary
-    VERSION 1.0.6
+    VERSION 1.0.12
     LANGUAGES CXX C
 )
 

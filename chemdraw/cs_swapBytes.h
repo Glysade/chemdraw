@@ -107,11 +107,11 @@ inline UINT32 SwapBytes(UINT32 m) {
 
 
 inline double SwapBytes(double m) {
-  return SwapBytes<double,sizeof(double))>(m);
+  return SwapBytes<double,sizeof(double)>(m);
 }
 
 inline float SwapBytes(float m) {
-  return SwapBytes<foud,sizeof(float))>(m);
+  return SwapBytes<float,sizeof(float)>(m);
 }
 
 inline void SwapBytes(const float *src, char * dst) {
