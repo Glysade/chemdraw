@@ -1,12 +1,19 @@
 # CMakeLists.txt
 cmake_minimum_required(VERSION 3.14)
-project(MyLibrary
-    VERSION 1.0.12
+project(ChemDrawLib
+    VERSION 1.0.13
     LANGUAGES CXX C
 )
 
 # Let user choose STATIC vs SHARED (default to SHARED)
 option(BUILD_SHARED_LIBS "Build ChemDraw as a shared library" ON)
+
+# we require a system EXPAT
+#  if you are making chemdraw for use with PYTHON, use the same
+#  expat version as python is built with, otherwise there may be
+#  issues
+find_package(EXPAT)
+
 
 include(TestBigEndian)
 test_big_endian(WORDS_BIGENDIAN)

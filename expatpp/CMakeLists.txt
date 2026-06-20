@@ -5,7 +5,7 @@
 
 
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/ConfigureExpatChecks.cmake)
+#include(${CMAKE_CURRENT_SOURCE_DIR}/ConfigureExpatChecks.cmake)
 
 include_directories(${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/expat/lib)
 if(MSVC)
@@ -13,19 +13,17 @@ if(MSVC)
 endif(MSVC)
 
 set(_SHARED SHARED)
+find_package(EXPAT)
 
-# expat c lib sources
+# expat cpp lib sources
 set(EXPAT_SRC
-	expatpp-code-r6-trunk/expat/lib/xmlparse.c
-	expatpp-code-r6-trunk/expat/lib/xmlrole.c
-	expatpp-code-r6-trunk/expat/lib/xmltok.c
-	expatpp-code-r6-trunk/expat/lib/xmltok_impl.c
-	expatpp-code-r6-trunk/expat/lib/xmltok_ns.c
 	expatpp-code-r6-trunk/src_pp/expatpp.cpp
 )
 
-add_library(expat ${EXPAT_SRC})
-target_include_directories(expat
+add_library(expatpp ${EXPAT_SRC})
+target_link_libraries(expatpp PRIVATE EXPAT::EXPAT)
+
+target_include_directories(expatpp
      PRIVATE
        ${CMAKE_CURRENT_SOURCE_DIR}/expatpp-code-r6-trunk/src_pp
      PUBLIC
@@ -35,7 +33,7 @@ target_include_directories(expat
        )
        
 if(EXPAT_INSTALL_STATIC_LIBS)
-  target_include_directories(expat_static
+  target_include_directories(expatpp_static
      PRIVATE
        ${CMAKE_CURRENT_SOURCE_DIR}/expatpp-code-r6-trunk/src_pp
      PUBLIC
@@ -59,13 +57,13 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
     CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
   message("== expat turn off warnings as errors when building")
   # turn off warnings as errors, this throws a bunch
-  target_compile_options(expat PRIVATE "-Wno-error")
+  target_compile_options(expatpp PRIVATE "-Wno-error")
   if(EXPAT_INSTALL_STATIC_LIBS)
-    target_compile_options(expat_static PRIVATE "-Wno-error")
+    target_compile_options(expatpp static PRIVATE "-Wno-error")
   endif(EXPAT_INSTALL_STATIC_LIBS)   
 endif()
 
-install(TARGETS expat EXPORT expatTargets
+install(TARGETS expatpp EXPORT expatTargets
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin
