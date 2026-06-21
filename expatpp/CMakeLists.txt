@@ -45,11 +45,11 @@ endif(EXPAT_INSTALL_STATIC_LIBS)
 
 if(MSVC)
   # == expat exporting all symbols
-  target_compile_definitions(expat PRIVATE "XMLIMPORT=__declspec(dllexport)")
-  set_target_properties(expat PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+  target_compile_definitions(expatpp PRIVATE "XMLIMPORT=__declspec(dllexport)")
+  set_target_properties(expatpp PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
   
   # turn off warnings as errors, this throws a bunch
-  target_compile_options(expat PRIVATE "/W0")
+  target_compile_options(expatpp PRIVATE "/W0")
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR

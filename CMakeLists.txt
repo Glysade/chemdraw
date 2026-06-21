@@ -1,7 +1,7 @@
 # CMakeLists.txt
 cmake_minimum_required(VERSION 3.14)
 project(ChemDrawLib
-    VERSION 1.0.13
+    VERSION 1.0.14
     LANGUAGES CXX C
 )
 
@@ -21,7 +21,7 @@ test_big_endian(WORDS_BIGENDIAN)
 
 if(WORDS_BIGENDIAN)
     add_definitions("-DPLATFORM_BIGENDIAN")
-else(WORDS_BIGENDIAN)
+else(WORDS_BIGENDIAN)CM
     add_definitions("-DPLATFORM_LITTLEENDIAN")
 endif(WORDS_BIGENDIAN)
 
