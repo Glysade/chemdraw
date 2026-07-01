@@ -1,25 +1,25 @@
 // Added by Glydade: Reimplementation of CDMap
 
 // BSD 3-Clause License
-// 
+//
 // Copyright (c) 2025, Glysade Inc
-// 
+//
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice, this
 //    list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its
 //    contributors may be used to endorse or promote products derived from
 //    this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -43,82 +43,106 @@
 #include <codecvt>
 
 
+// A forward cursor over the UTF-8 code points of a std::string.
+//
+// The cursor identifies the "current" character by the byte offset `pos` at
+// which that character begins. Nothing is decoded or advanced in the
+// constructor, so the accessors describe the character that begins at `pos`:
+//   - GetByteIndex(): byte offset where the current character begins
+//   - GetUTF8Length(): number of bytes the current character occupies (1-4)
+//   - GetCharacter(): decoded Unicode code point of the current character
+//   - AtEnd(): true once the cursor is at or past the end of the string
+// operator++ advances `pos` by the byte length of the current character.
+//
+// Malformed lead/continuation bytes are treated defensively as a single-byte
+// character so iteration always makes forward progress and never reads out of
+// bounds.
 class UTF8Iterator {
 public:
     UTF8Iterator(const std::string& str)
-      : data(str), pos(0), currentCodePoint(DecodeNext()) {}
+      : data(str), pos(0) {}
 
-    size_t      GetUTF8Length() const {
-      UTF8Iterator iter(data);
-      int count = 0;
-      for(; !iter.AtEnd(); iter++, count++) {}
-      return count;
+    // Number of bytes occupied by the character that begins at the current
+    // position, clamped to the bytes actually remaining in the string.
+    size_t GetUTF8Length() const {
+        if (AtEnd())
+            return 0;
+
+        const unsigned char byte1 = static_cast<unsigned char>(data[pos]);
+        size_t length = 1;
+        if (byte1 < 0x80)
+            length = 1;
+        else if ((byte1 & 0xE0) == 0xC0)
+            length = 2;
+        else if ((byte1 & 0xF0) == 0xE0)
+            length = 3;
+        else if ((byte1 & 0xF8) == 0xF0)
+            length = 4;
+        else
+            length = 1;  // invalid lead byte: treat as a single byte
+
+        // Never run past the end of the buffer for a truncated sequence.
+        if (pos + length > data.size())
+            length = 1;
+        return length;
     }
 
     size_t GetByteIndex() const { return pos; }
-  
-    // Returns the current Unicode code point without advancing the iterator
+
+    // Returns the current Unicode code point without advancing the iterator.
     uint32_t GetCharacter() const {
         if (AtEnd())
             throw std::out_of_range("Iterator has reached the end of the string.");
-        return currentCodePoint;
+        return Decode(GetUTF8Length());
     }
 
-    // Checks if the iterator has reached the end of the string
+    // Checks if the iterator has reached the end of the string.
     bool AtEnd() const {
-        return pos > data.size();
+        return pos >= data.size();
     }
 
-    // Post-increment operator: advances to the next character
+    // Post-increment operator: advances to the next character.
     UTF8Iterator operator++(int) {
-        UTF8Iterator temp = *this; // Copy current state
-        if (!AtEnd())
-            currentCodePoint = DecodeNext();
-        return temp; // Return old state
+        UTF8Iterator temp = *this;  // Copy current state
+        Advance();
+        return temp;  // Return old state
     }
-  
+
     UTF8Iterator& operator++() {
-        if (!AtEnd())
-            currentCodePoint = DecodeNext();
+        Advance();
         return *this;
     }
-    
 
 private:
     const std::string& data;
     size_t pos;
-    uint32_t currentCodePoint;
 
-    // Decodes the next UTF-8 sequence and advances the position
-    uint32_t DecodeNext() {
-        if (AtEnd())
-            return 0;
+    void Advance() {
+        if (!AtEnd())
+            pos += GetUTF8Length();
+    }
+
+    // Decodes the character of `length` bytes that begins at the current
+    // position. Does not modify the iterator.
+    uint32_t Decode(size_t length) const {
+        const unsigned char byte1 = static_cast<unsigned char>(data[pos]);
+        if (length == 1)
+            return byte1;
 
         uint32_t codePoint = 0;
-        unsigned char byte1 = data[pos];
-
-        if (byte1 < 0x80) { 
-            codePoint = byte1;
-            ++pos;
-        } else if ((byte1 & 0xE0) == 0xC0) { 
+        if (length == 2) {
             codePoint = (byte1 & 0x1F) << 6;
-            codePoint |= (data[pos + 1] & 0x3F);
-            pos += 2;
-        } else if ((byte1 & 0xF0) == 0xE0) { 
+            codePoint |= (static_cast<unsigned char>(data[pos + 1]) & 0x3F);
+        } else if (length == 3) {
             codePoint = (byte1 & 0x0F) << 12;
-            codePoint |= (data[pos + 1] & 0x3F) << 6;
-            codePoint |= (data[pos + 2] & 0x3F);
-            pos += 3;
-        } else if ((byte1 & 0xF8) == 0xF0) { 
+            codePoint |= (static_cast<unsigned char>(data[pos + 1]) & 0x3F) << 6;
+            codePoint |= (static_cast<unsigned char>(data[pos + 2]) & 0x3F);
+        } else {  // length == 4
             codePoint = (byte1 & 0x07) << 18;
-            codePoint |= (data[pos + 1] & 0x3F) << 12;
-            codePoint |= (data[pos + 2] & 0x3F) << 6;
-            codePoint |= (data[pos + 3] & 0x3F);
-            pos += 4;
-        } else {
-            throw std::runtime_error("Invalid UTF-8 sequence.");
+            codePoint |= (static_cast<unsigned char>(data[pos + 1]) & 0x3F) << 12;
+            codePoint |= (static_cast<unsigned char>(data[pos + 2]) & 0x3F) << 6;
+            codePoint |= (static_cast<unsigned char>(data[pos + 3]) & 0x3F);
         }
-
         return codePoint;
     }
 };
